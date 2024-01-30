@@ -2,63 +2,27 @@ import React from 'react';
 
 import Button from '../Button';
 import Toast from '../Toast';
-
+import { ToastContext } from '../ToastProvider/ToastProvider';
 import styles from './ToastPlayground.module.css';
 import ToastShelf from '../ToastShelf/ToastShelf';
 
 const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
 
 function ToastPlayground() {
-    const [toasts, setToasts] = React.useState([
-        {
-            id: crypto.randomUUID(),
-            message: 'Oh no!',
-            variant: 'error',
-        },
-        {
-            id: crypto.randomUUID(),
-            message: 'This is a notice.',
-            variant: 'notice',
-        },
-        {
-            id: crypto.randomUUID(),
-            message: 'This is a warning.',
-            variant: 'warning',
-        },
-        {
-            id: crypto.randomUUID(),
-            message: 'This is a success.',
-            variant: 'success',
-        }
-    ]);
+    const { createToast } = React.useContext(ToastContext);
     const [message, setMessage] = React.useState('');
     const [variant, setVariant] = React.useState(VARIANT_OPTIONS[0]);
 
 function handleCreateToast(event) {
     event.preventDefault();
-    const nextToasts = [
-        ...toasts,
-        {
-            id: crypto.randomUUID(),
-            message,
-            variant,
-        },
-    ];
 
-    setToasts(nextToasts);
+    createToast(message, variant);
 
     setMessage('');
 
     setVariant(VARIANT_OPTIONS[0]);
     };
 
-function handleDismiss(id) {
-    const nextToasts = toasts.filter(toast => {
-        return toast.id !== id;
-    })
-
-    setToasts(nextToasts)
-}
   return (
     <div className={styles.wrapper}>
       <header>
@@ -66,10 +30,7 @@ function handleDismiss(id) {
         <h1>Toast Playground</h1>
       </header>
 
-  <ToastShelf
-    toasts={toasts}
-    handleDismiss={handleDismiss}
-  />
+  <ToastShelf />
 
       <form className={styles.controlsWrapper} onSubmit={handleCreateToast}>
         <div className={styles.row}>
